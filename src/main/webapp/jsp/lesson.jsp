@@ -19,6 +19,10 @@ a.disabled {
 /* Make the disabled links grayish*/color: gray;
 /* And disable the pointer events */pointer-events: none;
 }
+.container {
+  max-height: 400px; 
+  overflow-y: auto; /*  vertical scroll */
+}
 </style>
 </head>
 <body>
