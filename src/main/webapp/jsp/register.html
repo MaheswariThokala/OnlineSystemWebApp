@@ -255,7 +255,7 @@
             alert("Success: " + data.message);
             location.href = "login.html";
           } else if (response.status == 400) {
-            alert("Error: " + data.message);
+            alert("User already exists!: " + data.message);
           } else {
             alert("Registration failed: " + data.message);
           }
