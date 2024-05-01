@@ -64,7 +64,7 @@
             </div>
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 form-container scrollableDiv" style="margin-top: 5rem;">
                   <form class="rounded bg-white shadow p-8" id="form">
-                     <h3 class="text-dark fw-bolder fs-4 mb-2 centered-text" style="padding-top:20px;">Online LPK12</h3>
+                     <h3 class="text-dark fw-bolder fs-4 mb-2 centered-text">Online LPK12</h3>
                      <div class="fw-normal text-muted mb-4 centered-text">
                         New to Online LPK12? <a href="register.html"class="text-primary fw-bold text-decoration-none">Create an Account</a>
                      </div>
@@ -91,8 +91,8 @@
                             <label for="showPasswordCheckbox">Show Password</label>
                             <input type="checkbox" id="showPasswordCheckbox" onclick="togglePasswordVisibility()"></div>      
                          
-                      <div class="mt-2 text-end" style="padding-right:32px;">
-                        <a href="logicOTP.html" class="text-primary fw-bold text-decoration-none">Forgot Password?</a>
+                      <div class="mt-2 text-end">
+                        <a href="forgotPassword.jsp" class="text-primary fw-bold text-decoration-none">Forgot Password?</a>
                       </div>
                       <div class="centered-container "><button type="submit" class="btn btn-primary submit_btn w-50 my-4 centered-text" >Login</button></div>
 
@@ -124,67 +124,68 @@
 
 </body>
  <script type="text/javascript">
-    var form = document.getElementById('form');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
-        var role = document.getElementById('role').value;
-        var errorMessage = document.getElementById("error-message");
+    var form=document.getElementById('form');
+    form.addEventListener('submit',function(e){
+      e.preventDefault()
+      var username=document.getElementById('username').value;
+      var password=document.getElementById('password').value;
+      var role=document.getElementById('role').value;
+      var errorMessage = document.getElementById("error-message");
+      //fetch post request
+      const corsProxy = "https://onlinelpk12-corsproxy.herokuapp.com/";
+      const signInAPI = dotnet_endpoint+"api/User/Login";
 
-        const signInAPI = dotnet_endpoint + "api/User/Login";
-        fetch(signInAPI, {
-            method: 'POST',
-            body: JSON.stringify({
-                "roleType": role,
-                "userName": username,
-                "password": password
-            }),
-            headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
+      fetch(signInAPI,{
+        method:'POST',
+        body: JSON.stringify({
+            "roleType":role,
+            "userName":username,
+            "password":password
+        }),
+        headers:{
+          'Content-Type':'application/json; charset=UTF-8'
+        }
+      }).then(function(response){
+        var resp=response.json();
+        console.log(resp)
+        if(response.status==200){
+            resp.then((data)=>{
+                sessionStorage.setItem("username",data.username)
+                sessionStorage.setItem("userId",data.id)
+        sessionStorage.setItem("token",data.accessToken)
+                console.log(sessionStorage.getItem("userId"))	
+              	if(data.content.roles=="Teacher"){
+          sessionStorage.setItem("userRole","Teacher")
+              	  location.href='hometeacher.jsp'
+              	}
+              	else if(data.content.roles=='Student'){
+         sessionStorage.setItem("userRole","Student")
+              	  location.href='home.jsp'
+              	
             }
-        }).then(function(response) {
-            if (response.status === 200) {
-                response.json().then(data => {
-                    sessionStorage.setItem("username", data.content.username);
-                    sessionStorage.setItem("userId", data.content.id);
-                    sessionStorage.setItem("token", data.content.accessToken);
-
-                    // Redirect based on roles and enrolled courses
-                    if (data.content.roles === "Teacher") {
-                        sessionStorage.setItem("userRole", "Teacher");
-                        location.href = 'hometeacher.jsp';
-                    } else if (data.content.roles === "Course Developer") {
-                        sessionStorage.setItem("userRole", "Course developer");
-                        location.href = 'CoursesDashboard.jsp';
-                    } else if (data.content.roles === 'Student') {
-                        sessionStorage.setItem("userRole", "Student");
-                        if (data.content.enrolledCourses === "OnlineLPK12") {
-                            sessionStorage.setItem("enrolledCourses", "OnlineLPK12");
-                            location.href = 'home_student_onlinelpk12.jsp';
-                        } else if (data.content.enrolledCourses === 'LPK12') {
-                            sessionStorage.setItem("enrolledCourses", "LPK12");
-                            location.href = 'home_student_logicds.jsp';
-                        } else {
-                            sessionStorage.setItem("enrolledCourses", "home.jsp");
-                            location.href = 'home.jsp';
-                        }
-                    }
-                });
-            } else {
-                response.json().then(data => {
-                    if (response.status === 404 || response.status === 401) {
-                        alert(data.message);
-                    } else if (response.status === 400) {
-                        errorMessage.innerText = "Invalid Password";
-                        errorMessage.style.display = "block"; 
-                    }
-                });
+            else if(data.content.roles=='Course Developer'){
+                sessionStorage.setItem("userRole","Course Developer")
+                     	  location.href='CoursesDashboard.jsp'
+                     	}
+            })
+        }
+    
+        else{
+            if(response.status==404){
+                resp.then((data)=>{
+                    alert(data.message)
+                })
             }
-        }).catch(function(error) {
-            console.error('Error during fetch operation:', error.message);
-            alert('Failed to process login due to an error.');
-        });
-    });
+            else if (response.status=401){
+            	resp.then((data)=>{
+            		alert(data.message)
+            	})
+            }
+        }
+      }).then(function(data){
+      });
+                    
+        
+})
 </script>
 </html>
