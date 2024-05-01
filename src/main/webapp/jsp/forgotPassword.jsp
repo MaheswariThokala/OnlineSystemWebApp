@@ -24,7 +24,7 @@
           <h2>Forgot Password</h2>
   	  <form id="form" method="post" >
  	    <label for="userName">UserName</label>
-	    <input type="text"  name="user" id="userName" required>
+	    <input type="text"  name="user" id="user Name" required>
 	    <br>
  	    <label for="newPassword">New Password</label><br>
 	    <input type="Password" id="newPassword" required>
