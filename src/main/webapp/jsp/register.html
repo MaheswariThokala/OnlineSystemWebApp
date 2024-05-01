@@ -129,6 +129,7 @@
                           <label class="form-label" for="password"
                             >Password</label
                           >
+			   <span toggle="#password" class="eye-toggle bi bi-eye-slash position-relative"></span> 	
                         </div>
                       </div>
 
@@ -143,6 +144,9 @@
                           <label class="form-label" for="repeatpassword"
                             >Confirm your password</label
                           >
+				
+		          <span toggle="#repeatpassword" class="eye-toggle bi bi-eye-slash position-relative"></span>  		
+				
                         </div>
                       </div>
 
@@ -191,6 +195,27 @@
       </div>
     </section>
   </body>
+  <script>
+  // Function to toggle password visibility
+  function togglePasswordVisibility(inputField, eyeIcon) {
+    const type =
+      inputField.getAttribute("type") === "password" ? "text" : "password";
+    inputField.setAttribute("type", type);
+    eyeIcon.classList.toggle("bi-eye");
+    eyeIcon.classList.toggle("bi-eye-slash");
+  }
+
+  // Add event listeners to toggle password visibility
+  document.querySelectorAll(".eye-toggle").forEach(function (icon) {
+    icon.addEventListener("click", function () {
+      const target = document.querySelector(this.getAttribute("toggle"));
+      togglePasswordVisibility(target, this);
+    });
+  });
+  
+  
+  </script>	
+	
   <script type="text/javascript">
     var form = document.getElementById("form");
     form.addEventListener("submit", function (e) {
@@ -255,7 +280,7 @@
             alert("Success: " + data.message);
             location.href = "login.html";
           } else if (response.status == 400) {
-            alert("Error: " + data.message);
+            alert("User already Exist: " + data.message);
           } else {
             alert("Registration failed: " + data.message);
           }
